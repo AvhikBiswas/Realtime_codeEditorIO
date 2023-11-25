@@ -1,23 +1,29 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { changeEditorValue } from '../Utils/EditorSlice';
+import CodeMirror from '@uiw/react-codemirror';
+import { javascript } from '@codemirror/lang-javascript';
+import { aura } from '@uiw/codemirror-theme-aura';
+
+import   '../editor.css';
 
 export default function Editor() {
   const editorState = useSelector((state) => state.EditorState.value);
   const dispatch = useDispatch();
 
-  const handleChange = (e) => {
-    const curr_value = e.target.value;
-    dispatch(changeEditorValue(curr_value));
+  const handleChange = (editor, data, value) => {
+    dispatch(changeEditorValue(value));
   };
 
   return (
-    <div className="flex flex-grow bg-white rounded shadow p-4">
-      <textarea
-        className="w-full h-full resize-none outline-none border-none"
-        id="editor"
-        value={editorState} // assuming you want to display the current value in the textarea
-        onChange={handleChange} // pass a reference to the function, not the result of calling it
+    <div className="editor-container">
+      <CodeMirror id='editor'
+        value={editorState}
+        onInput={handleChange}
+        height="40rem"
+        theme={aura}
+        extensions={[javascript({ jsx: true })]}
+        
       />
     </div>
   );

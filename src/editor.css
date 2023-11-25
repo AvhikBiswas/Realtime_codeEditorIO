@@ -1,0 +1,12 @@
+#editor {
+    overflow-y: scroll;
+  }
+  
+  #editor::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .editor-container {
+    font-family: Arial, monospace;
+    font-size: 1.25rem;
+    }
