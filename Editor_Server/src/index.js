@@ -2,7 +2,7 @@ const express = require('express');
 const http = require('http');
 const cors = require('cors');
 const connectDB = require('./config/database');
-const initializeSocket = require('./socket'); 
+const initializeSocket = require('./socket'); // Import the new socket file
 
 const port = 3030;
 
