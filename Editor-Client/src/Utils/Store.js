@@ -1,5 +1,5 @@
 import {configureStore} from '@reduxjs/toolkit';
-import EditorReducer from '../Utils/EditorSlice';
+import EditorReducer from './EditorSlice';
 
 
 

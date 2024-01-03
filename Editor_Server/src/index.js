@@ -1,31 +1,55 @@
 const express = require('express');
 const http = require('http');
 const cors = require('cors');
-const connectDB = require('./config/database');
-const initializeSocket = require('./socket');
+const connectDB = require('./config/database.js');
+const socketIO = require('socket.io');
 const bodyParser = require('body-parser');
 const Api_Routes = require('./routes/index');
 
 const port = 3030;
 const app = express();
 const server = http.createServer(app);
+const io = socketIO(server, {
+  cors: {
+    origin: 'http://localhost:3000',
+    methods: ['GET', 'POST'],
+  },
+});
 
-
-// middilwaires
+// Middlewares
 app.use(cors());
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended:true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 
-//Socket
-initializeSocket(server);
+// Socket.io connection handling
+io.on('connection', (socket) => {
+  console.log(`User connected: ${socket.id}`);
 
-//test 
+  socket.on('join_room', (data) => {
+    const { room } = data;
+    socket.join(room);
+    console.log(`User ${socket.id} joined room ${room}`);
+  });
+
+  socket.on('update_code', (data) => {
+    const { room, code } = data;
+    console.log(`Received code update from ${socket.id} in room ${room}`);
+    io.to(room).emit('receive_update', { code });
+  });
+
+  socket.on('disconnect', () => {
+    console.log(`User disconnected: ${socket.id}`);
+  });
+});
+
+// Test Route
 app.get('/', (req, res) => {
   console.log('Route hit!');
   res.send('Hello, World!');
 });
 
-app.use('/api',Api_Routes);
+// API Routes
+app.use('/api', Api_Routes);
 
 server.listen(port, async () => {
   await connectDB();

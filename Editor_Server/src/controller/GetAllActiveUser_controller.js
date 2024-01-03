@@ -3,9 +3,8 @@ const Find_ActiveAllUser = new GetAllActiveUser_Service();
 
 const GetAllActiveUser = async (req, res) => {
     try {
-        const { roomId } = req.body;
-        console.log('room id', roomId);
-        if (roomId) {
+        const roomid = data.roomID;
+        if (roomid) {
             const response = await Find_ActiveAllUser.findAllUser(req.body);
             return res.status(201).json({
                 success: true,
@@ -14,7 +13,7 @@ const GetAllActiveUser = async (req, res) => {
                 err: {}
             });
         }
-        return res.status(404).json({
+        return res.status(400).json({
             success: false,
             message: "Enter Room Id",
             data: {},

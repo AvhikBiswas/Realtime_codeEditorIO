@@ -5,7 +5,7 @@ import CodeMirror from '@uiw/react-codemirror';
 import { javascript } from '@codemirror/lang-javascript';
 import { aura } from '@uiw/codemirror-theme-aura';
 import io from 'socket.io-client';
-import { useLocation, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import './editor.css';
 
 const socket = io.connect('http://localhost:3030');
@@ -13,24 +13,29 @@ const socket = io.connect('http://localhost:3030');
 const Editor = () => {
   const { roomId } = useParams();
   console.log('params', roomId);
- 
+
   const room = roomId; // Change to string as room identifier
-  const editorState = useSelector((state) => state.EditorState.value);
+  let editorState = useSelector((state) => state.EditorState.value);
   const dispatch = useDispatch();
 
   console.log('STATE IS ', editorState);
 
-  const update = () => {
-    socket.on('receive_update', (data) => {
-      const { code } = data;
-      dispatch(changeEditorValue(code));
-    });
-  };
-
   useEffect(() => {
+    const update = () => {
+      socket.on('receive_update', (data) => {
+        const { code } = data;
+        dispatch(changeEditorValue(code));
+      });
+    };
+
     socket.emit('join_room', { room });
     update();
-  }, [update, editorState]);
+
+    return () => {
+      // Cleanup: Remove the socket listener when component unmounts
+      socket.off('receive_update');
+    };
+  }, [room, dispatch]); // Only include necessary dependencies
 
   const handleChange = (value) => {
     dispatch(changeEditorValue(value));

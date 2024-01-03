@@ -2,9 +2,12 @@ const user = require('../model/user');
 
 class UserRepository {
     async createUser(data) {
+
         try {
+
             const username = data.userNames;
-            const roomid = data.roomId;
+            const roomid = data.roomID;
+            console.log('username,roomid', username, roomid);
             const UserData = await user.create({
                 userNames: username,
                 roomId: roomid,
@@ -18,11 +21,10 @@ class UserRepository {
         }
     }
 
-
     async findUser(data) {
         try {
             const username = data.userNames;
-            const roomid = data.roomId;
+            const roomid = data.roomID;
             const userData = await user.find({
                 userNames: username,
                 roomId: roomid
@@ -35,9 +37,9 @@ class UserRepository {
     }
 
     async findPersonsByRoomAndActive(roomNumber) {
-        
+
         try {
-            const roomid = roomNumber.roomId;
+            const roomid = roomNumber.roomID;
             const persons = await user.find({
                 roomId: roomid,
                 active: true,
