@@ -3,8 +3,8 @@ const user = require('../model/user');
 class UserRepository {
     async createUser(data) {
         try {
-            const username = data.content.userNames;
-            const roomid = data.content.roomId;
+            const username = data.userNames;
+            const roomid = data.roomId;
             const UserData = await user.create({
                 userNames: username,
                 roomId: roomid,
@@ -21,9 +21,8 @@ class UserRepository {
 
     async findUser(data) {
         try {
-            const username = data.content.userNames;
-            const roomid = data.content.roomId;
-            console.log('Query:', { userNames: username, roomId: roomid });
+            const username = data.userNames;
+            const roomid = data.roomId;
             const userData = await user.find({
                 userNames: username,
                 roomId: roomid
@@ -36,8 +35,9 @@ class UserRepository {
     }
 
     async findPersonsByRoomAndActive(roomNumber) {
+        
         try {
-            const roomid = roomNumber.content.roomId;
+            const roomid = roomNumber.roomId;
             const persons = await user.find({
                 roomId: roomid,
                 active: true,
@@ -54,8 +54,8 @@ class UserRepository {
     async removeUser(data) {
 
         try {
-            const username = data.content.userNames;
-            const roomid = data.content.roomId;
+            const username = data.userNames;
+            const roomid = data.roomId;
             const res = await user.deleteMany({
                 userNames: username,
                 roomId: roomid

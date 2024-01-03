@@ -6,7 +6,6 @@ class RemoveUser {
     }
     async LeftUser(data) {
         try {
-            console.log(data);
             const res = await this.userRepository.findUser(data);
             if (res.length != 0) {
                 const result = await this.userRepository.removeUser(data);

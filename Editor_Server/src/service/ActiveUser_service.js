@@ -6,6 +6,8 @@ class Find_ActiveUser{
     }
     async findAllUser(data){
         try {
+            console.log('from service', data);
+
             const res = await this.userRepository.findPersonsByRoomAndActive(data);
             console.log("from Active user ",res);
             return res;

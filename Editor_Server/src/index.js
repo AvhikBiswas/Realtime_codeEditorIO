@@ -4,6 +4,7 @@ const cors = require('cors');
 const connectDB = require('./config/database');
 const initializeSocket = require('./socket');
 const bodyParser = require('body-parser');
+const Api_Routes = require('./routes/index');
 
 const port = 3030;
 const app = express();
@@ -23,6 +24,8 @@ app.get('/', (req, res) => {
   console.log('Route hit!');
   res.send('Hello, World!');
 });
+
+app.use('/api',Api_Routes);
 
 server.listen(port, async () => {
   await connectDB();
