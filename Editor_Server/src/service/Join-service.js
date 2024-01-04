@@ -9,6 +9,7 @@ class Join_User {
         try {
             console.log(data);
             const res = await this.userRepository.findUser(data);
+            console.log('find user return ',res);
             if(res.length==0){
                 const UserCreated =await this.userRepository.createUser(data);
                 return UserCreated;

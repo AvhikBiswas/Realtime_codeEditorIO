@@ -5,6 +5,7 @@ const connectDB = require('./config/database.js');
 const socketIO = require('socket.io');
 const bodyParser = require('body-parser');
 const Api_Routes = require('./routes/index');
+const  mongoose  = require('mongoose');
 
 const port = 3030;
 const app = express();
@@ -37,10 +38,28 @@ io.on('connection', (socket) => {
     io.to(room).emit('receive_update', { code });
   });
 
+  // sync_code And New User
+
+  socket.on('New_clint', (data) => {
+    const { room } = data;
+    socket.broadcast.to(room).emit('New_user',{room});
+  })
+
+  socket.on('sync_code',(data)=>{
+    const { code,room } = data;
+    console.log(`from sync_code roomid and  code ${room} in room ${code}`);
+    io.to(room).emit('updated_code', { code });
+  })
+
+
+
   socket.on('disconnect', () => {
     console.log(`User disconnected: ${socket.id}`);
   });
 });
+
+
+
 
 // Test Route
 app.get('/', (req, res) => {
@@ -54,4 +73,9 @@ app.use('/api', Api_Routes);
 server.listen(port, async () => {
   await connectDB();
   console.log('Server Running On', port);
+  if (mongoose.connection.readyState !== 1) {
+    console.log('Not connected to MongoDB');
+    return;
+}
+
 });

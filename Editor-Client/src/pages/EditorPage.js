@@ -7,8 +7,6 @@ import UserName from '../components/UserName';
 import { UserLeave } from '../api/User_API';
 import "./editorpage.css";
 
-
-
 export default function EditorPage() {
   const location = useLocation();
   const name = location.state?.userName;
@@ -16,6 +14,13 @@ export default function EditorPage() {
   const { roomId } = useParams();
   const [showUserName, setShowUserName] = useState(false);
   const navigate = useNavigate();
+  const [AlluserData, setAlluserData] = useState([]);
+
+  function handelAllUser(res) {
+    // Ensure that data is an array before setting it
+    console.log(' handelAlluser DAta ------>', res.data);
+    setAlluserData(res.data);
+  }
 
   useEffect(() => {
     setOwnName(name);
@@ -23,8 +28,6 @@ export default function EditorPage() {
       setShowUserName(true);
     }
   }, [name]);
-
-  const AlluserData = [{ id: '1', name: ownName }];
 
   const linkedInUrl = 'https://www.linkedin.com/in/avhik/';
   const githubUrl = 'https://github.com/AvhikBiswas';
@@ -34,11 +37,9 @@ export default function EditorPage() {
     setShowUserName(false);
   };
 
-
   const handelLeave = async () => {
     const data = { ownName, roomId };
-    const res = await UserLeave(data);
-    console.log('handel leave ', res);
+    await UserLeave(data);
     navigate('/');
   }
 
@@ -66,14 +67,15 @@ export default function EditorPage() {
           <div className='flex flex-1'>
             {/* User Section */}
             <div className='w-1/5 flex flex-wrap mb-8'>
-              {AlluserData.map((item) => (
-                <UserAvatar key={item.id} user={item} />
-              ))}
+              AlluserData.legth !== 0 ?{ AlluserData.map((item) => (
+                <UserAvatar key={item._id} user={item} />
+              ))
+            }
             </div>
 
             {/* Editor Section */}
             <div className='w-3/5 mb-5'>
-              <Editor />
+              <Editor handelAllUser={handelAllUser} />
             </div>
 
             {/* Terminal Section */}
@@ -97,7 +99,7 @@ export default function EditorPage() {
             <div className='flex items-center'>
               <div className='mr-2 text-xs'>
                 <p>Note: This app is still under development.</p>
-                <p> Please let me know if you find bugs out here.</p>
+                <p>Please let me know if you find bugs out here.</p>
                 <p>Connect with me:</p>
               </div>
               <div className='flex items-center'>

@@ -1,8 +1,8 @@
 import axios from 'axios';
 import Api_Url_v1 from './Api_Url';
 
-export const SignInNewUser = (ownName, roomid) => {
-  axios.post(`${Api_Url_v1}/create`, {
+export const SignInNewUser = async (ownName, roomid) => {
+  await axios.post(`${Api_Url_v1}/create`, {
     userNames: ownName,
     roomID: roomid
   })
@@ -10,10 +10,33 @@ export const SignInNewUser = (ownName, roomid) => {
     .catch(error => console.error('problem to send user data:', error));
 };
 
-export const UserLeave = (data) => {
-  axios.delete(`${Api_Url_v1}/leave`, {
+export const UserLeave = async (data) => {
+  await axios.delete(`${Api_Url_v1}/leave`, {
     data
   })
     .then(response => console.log('response from axios ', response))
     .catch(error => console.error('problem to send user data:', error));
 };
+
+
+export const GetAllUser = async (roomid) => {
+  console.log('roomid ---->', roomid);
+
+  try {
+    const response = await axios.get(`${Api_Url_v1}/AllUser`, {
+      params: {
+        roomId: roomid,
+        test: 'hi'
+      }
+    });
+
+    console.log('response from axios:', response.data);
+    return response.data; // Return the data received from the server
+  } catch (error) {
+    console.error('problem to send user data:', error);
+    throw error; // Rethrow the error to handle it in the calling code
+  }
+};
+
+
+
