@@ -10,13 +10,10 @@ export const SignInNewUser = (ownName, roomid) => {
     .catch(error => console.error('problem to send user data:', error));
 };
 
-export const UserLeave = (ownName, roomid) => {
+export const UserLeave = (data) => {
   axios.delete(`${Api_Url_v1}/leave`, {
-
-    userNames: ownName,
-    roomId: roomid
-
+    data
   })
-    .then(response => console.log('response', response))
+    .then(response => console.log('response from axios ', response))
     .catch(error => console.error('problem to send user data:', error));
 };

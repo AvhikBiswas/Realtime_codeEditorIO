@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import UserAvatar from '../components/UserAvatar';
 import Editor from '../components/Editor';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { FaLinkedin, FaGithub } from 'react-icons/fa';
 import UserName from '../components/UserName';
 import { UserLeave } from '../api/User_API';
@@ -13,7 +13,7 @@ export default function EditorPage() {
   const location = useLocation();
   const name = location.state?.userName;
   const [ownName, setOwnName] = useState('');
-  const roomID = location.state?.roomID;
+  const { roomId } = useParams();
   const [showUserName, setShowUserName] = useState(false);
   const navigate = useNavigate();
 
@@ -22,7 +22,7 @@ export default function EditorPage() {
     if (!name) {
       setShowUserName(true);
     }
-  }, [name, roomID]);
+  }, [name]);
 
   const AlluserData = [{ id: '1', name: ownName }];
 
@@ -35,8 +35,10 @@ export default function EditorPage() {
   };
 
 
-  const handelLeave =async () => {
-   await UserLeave(ownName,roomID)
+  const handelLeave = async () => {
+    const data = { ownName, roomId };
+    const res = await UserLeave(data);
+    console.log('handel leave ', res);
     navigate('/');
   }
 

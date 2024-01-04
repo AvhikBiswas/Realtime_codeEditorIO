@@ -23,6 +23,7 @@ class UserRepository {
 
     async findUser(data) {
         try {
+            console.log("from repository Data",data);
             const username = data.userNames;
             const roomid = data.roomID;
             const userData = await user.find({
@@ -55,12 +56,15 @@ class UserRepository {
     }
     async removeUser(data) {
 
+        console.log('remove user repo data',data);
         try {
-            const username = data.userNames;
+
+            const username = data.ownName;
             const roomid = data.roomId;
+            console.log('user name and roo id in repository ',username,roomid);
             const res = await user.deleteMany({
                 userNames: username,
-                roomId: roomid
+                roomId: roomid,
             });
             console.log('user deleted', res);
             return res;

@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
+import { SignInNewUser } from '../api/User_API';
+import { useParams } from 'react-router-dom';
 
 const UserName = ({ onJoin }) => {
   const [userName, setUserName] = useState('');
-
-  const handleJoin = () => {
+  const { roomId } = useParams();  
+  const handleJoin = async() => {
     if (userName.trim() !== '') {
       onJoin(userName);
+     const data =await SignInNewUser(userName,roomId)
+      return data;
     }
   };
 
