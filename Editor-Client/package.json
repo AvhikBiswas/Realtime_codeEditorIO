@@ -3,6 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+<<<<<<< HEAD
+    "@codemirror/basic-setup": "^0.20.0",
+=======
+>>>>>>> 77669763a06aaed1aa339f4b79f4307d0d3c5198
     "@codemirror/lang-cpp": "^6.0.2",
     "@codemirror/lang-javascript": "^6.2.1",
     "@reduxjs/toolkit": "^1.9.7",
@@ -11,8 +15,14 @@
     "@testing-library/user-event": "^13.5.0",
     "@uiw/codemirror-theme-aura": "^4.21.20",
     "@uiw/codemirror-theme-okaidia": "^4.21.20",
+<<<<<<< HEAD
+    "@uiw/react-codemirror": "^4.21.21",
+    "axios": "^1.6.3",
+    "codemirror": "^6.0.1",
+=======
     "@uiw/react-codemirror": "^4.21.20",
     "axios": "^1.6.3",
+>>>>>>> 77669763a06aaed1aa339f4b79f4307d0d3c5198
     "react": "^18.2.0",
     "react-avatar": "^5.0.3",
     "react-dom": "^18.2.0",
