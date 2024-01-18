@@ -5,7 +5,7 @@ const connectDB = require('./config/database.js');
 const socketIO = require('socket.io');
 const bodyParser = require('body-parser');
 const Api_Routes = require('./routes/index');
-const  mongoose  = require('mongoose');
+const mongoose = require('mongoose'); // Use only one import statement for mongoose
 
 const port = 3030;
 const app = express();
@@ -27,39 +27,30 @@ io.on('connection', (socket) => {
   console.log(`User connected: ${socket.id}`);
 
   socket.on('join_room', (data) => {
-    const { room } = data;
+    const { ownName, room } = data;
+    console.log('---------own name ---', ownName);
     socket.join(room);
-    console.log(`User ${socket.id} joined room ${room}`);
+    console.log(`User ${ownName} joined room ${room}`);
+    socket.to(room).emit("JOINED", { Ownname: ownName, room });
   });
 
-  socket.on('update_code', (data) => {
-    const { room, code } = data;
-    console.log(`Received code update from ${socket.id} in room ${room}`);
-    io.to(room).emit('receive_update', { code });
+  socket.on('SYNC_CODE', (data) => {
+    const { code, room } = data;
+    console.log(`from sync_code roomid and code ${room} in room ${code}`);
+    socket.to(room).emit('CODE_CHANGE', { code });
   });
 
-  // sync_code And New User
+  socket.on('CODE_CHANGE', (data) => {
+    const { code, room } = data;
+    console.log(`from code_change roomid and code ${room} in room ${code}`);
+    socket.in(room).emit('CODE_CHANGE', { code });
+  });
 
-  socket.on('New_clint', (data) => {
-    const { room } = data;
-    socket.broadcast.to(room).emit('New_user',{room});
-  })
-
-  socket.on('sync_code',(data)=>{
-    const { code,room } = data;
-    console.log(`from sync_code roomid and  code ${room} in room ${code}`);
-    io.to(room).emit('updated_code', { code });
-  })
-
-
-
-  socket.on('disconnect', () => {
-    console.log(`User disconnected: ${socket.id}`);
+  socket.on('Left', (data) => {
+    const { ownName, room } = data;
+    io.to(room).emit("Disconnected", { Ownname: ownName, room });
   });
 });
-
-
-
 
 // Test Route
 app.get('/', (req, res) => {
@@ -76,6 +67,5 @@ server.listen(port, async () => {
   if (mongoose.connection.readyState !== 1) {
     console.log('Not connected to MongoDB');
     return;
-}
-
+  }
 });
