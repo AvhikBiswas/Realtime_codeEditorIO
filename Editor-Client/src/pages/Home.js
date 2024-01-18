@@ -8,7 +8,11 @@ export default function Home() {
   const [RoomKeyId, setRoomId] = useState('');
   const [userName, setUserName] = useState('');
   const [created, setCreated] = useState(false);
+<<<<<<< HEAD
 const navigate = useNavigate();
+=======
+
+>>>>>>> 77669763a06aaed1aa339f4b79f4307d0d3c5198
   const create_user = async (ownName, roomID) => {
 
     if (ownName && roomID) {
@@ -19,7 +23,11 @@ const navigate = useNavigate();
     }
   };
 
+<<<<<<< HEAD
   
+=======
+  const navigate = useNavigate();
+>>>>>>> 77669763a06aaed1aa339f4b79f4307d0d3c5198
 
   const createRoom = (e) => {
     e.preventDefault();

@@ -24,3 +24,9 @@ const GetAllActiveUser = async (req, res) => {
 };
 
 module.exports = GetAllActiveUser;
+<<<<<<< HEAD
+=======
+
+
+module.exports = GetAllActiveUser;
+>>>>>>> 77669763a06aaed1aa339f4b79f4307d0d3c5198
