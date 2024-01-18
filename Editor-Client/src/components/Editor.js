@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { changeEditorValue } from '../Utils/EditorSlice';
@@ -55,5 +54,3 @@ const Editor = ({ socketRef, roomId, onCodeChange }) => {
 };
 
 export default Editor;
-=======
->>>>>>> b597b89ed58d995516f77bc0f22c1368d461f65e

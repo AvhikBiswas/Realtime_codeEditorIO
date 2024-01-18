@@ -2,12 +2,9 @@ import axios from 'axios';
 import Api_Url_v1 from './Api_Url';
 
 export const SignInNewUser = async (ownName, roomid) => {
-<<<<<<< HEAD
 
 console.log('bro thre room is ',roomid);
 
-=======
->>>>>>> 77669763a06aaed1aa339f4b79f4307d0d3c5198
   await axios.post(`${Api_Url_v1}/create`, {
     userNames: ownName,
     roomID: roomid

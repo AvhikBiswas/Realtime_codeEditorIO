@@ -7,14 +7,10 @@ import { SignInNewUser } from '../api/User_API';
 export default function Home() {
   const [RoomKeyId, setRoomId] = useState('');
   const [userName, setUserName] = useState('');
-  const [created, setCreated] = useState(false);
-<<<<<<< HEAD
-const navigate = useNavigate();
-=======
+  
+  const navigate = useNavigate();
 
->>>>>>> 77669763a06aaed1aa339f4b79f4307d0d3c5198
   const create_user = async (ownName, roomID) => {
-
     if (ownName && roomID) {
       const data = await SignInNewUser(ownName, roomID);
       return data;
@@ -22,12 +18,6 @@ const navigate = useNavigate();
       console.error('Name or Room ID is empty');
     }
   };
-
-<<<<<<< HEAD
-  
-=======
-  const navigate = useNavigate();
->>>>>>> 77669763a06aaed1aa339f4b79f4307d0d3c5198
 
   const createRoom = (e) => {
     e.preventDefault();
@@ -46,7 +36,7 @@ const navigate = useNavigate();
     }
   };
 
-  const handelKey = (e) => {
+  const handleKey = (e) => {
     if (e.key === 'Enter') {
       joinRoom();
     }
@@ -82,7 +72,7 @@ const navigate = useNavigate();
             className="w-full border rounded-md py-2 px-3 bg-gray-700 text-white"
             placeholder="Enter Your Name"
             onChange={(e) => setUserName(e.target.value)}
-            onKeyUp={handelKey}
+            onKeyUp={handleKey}
           />
         </div>
 
