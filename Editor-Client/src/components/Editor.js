@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { changeEditorValue } from '../Utils/EditorSlice';
 import CodeMirror from '@uiw/react-codemirror';
@@ -9,7 +9,7 @@ import './editor.css';
 
 const Editor = ({ socketRef, roomId, onCodeChange }) => {
   const dispatch = useDispatch();
-  let editorValue = useSelector((state) => state.EditorState.value);
+  const editorValue = useSelector((state) => state.EditorState.value);
 
   const handleChange = (value) => {
     dispatch(changeEditorValue(value));
@@ -25,6 +25,7 @@ const Editor = ({ socketRef, roomId, onCodeChange }) => {
     const codeChangeHandler = ({ code }) => {
       console.log('from editor comp code change -> ', code);
       if (code !== null) {
+        onCodeChange(code);
         dispatch(changeEditorValue(code));
       }
     };

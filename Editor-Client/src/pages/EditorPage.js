@@ -19,7 +19,6 @@ export default function EditorPage() {
   const socketRef = useRef(null);
   const codeRef = useRef('Console.log()');
   const [ownName, setOwnName] = useState(name);
-  
 
   useEffect(() => {
     const init = async () => {
@@ -48,10 +47,13 @@ export default function EditorPage() {
 
       socketRef.current.on('connect', () => {
         try {
+          const storedCode = localStorage.getItem('editorCode');
+          const initialCode = storedCode;
           socketRef.current.emit('SYNC_CODE', {
-            code: codeRef.current,
+            code: initialCode,
             roomId,
           });
+          codeRef.current = initialCode;
         } catch (error) {
           console.log('problem syncing the code');
         }
@@ -69,34 +71,29 @@ export default function EditorPage() {
         });
       });
 
-      socketRef.current.on('DISCONNECTED', ({ roomId, Ownname }) => {
+      socketRef.current.on('DISCONNECTED', ({ Ownname }) => {
         toast.success(`${Ownname} left the room.`);
-        if (socketRef.current) {
-          socketRef.current.disconnect();
-        }
       });
     };
 
     init();
 
     return () => {
-      UserLeave(ownName, roomId);
       if (socketRef.current) {
         socketRef.current.disconnect();
         socketRef.current.off('JOINED');
-        socketRef.current.off('DISCONNECTED');
-        socketRef.current.off('CODE_CHANGE');
       }
     };
-  }, [ownName, roomId]);
+  }, []);
 
   const handleCopyToClipboard = () => {
     navigator.clipboard.writeText(roomId);
     toast.success('Room link copied to clipboard!');
   };
 
-  const handelLeave = () => {
-    UserLeave(ownName, roomId);
+  const handelLeave = async () => {
+    const data = { ownName, roomId };
+    await UserLeave(data);
     navigate('/');
   };
 

@@ -5,7 +5,7 @@ const connectDB = require('./config/database.js');
 const socketIO = require('socket.io');
 const bodyParser = require('body-parser');
 const Api_Routes = require('./routes/index');
-const mongoose = require('mongoose'); // Use only one import statement for mongoose
+const mongoose = require('mongoose');
 
 const port = 3030;
 const app = express();
@@ -36,16 +36,16 @@ io.on('connection', (socket) => {
   socket.on('SYNC_CODE', (data) => {
     const { code, roomId } = data;
     console.log(`from sync_code roomid and code ${roomId} in room ${code}`);
-    socket.to(roomId).emit('CODE_CHANGE', { code });
+    io.to(roomId).emit('CODE_CHANGE', { code });
   });
 
   socket.on('CODE_CHANGE', (data) => {
     const { code, roomId } = data;
     console.log(`from code_change roomid and code ${roomId} in room ${code}`);
-    socket.to(roomId).emit('CODE_CHANGE', { code });
+    socket.in(roomId).emit('CODE_CHANGE', { code });
   });
 
-  socket.on('DISCONNECTED', (data) => {
+  socket.on('DISCONNECTING', (data) => {
     const { ownName, roomId } = data;
     socket.to(roomId).emit('DISCONNECTED', { Ownname: ownName, room: roomId });
   });
