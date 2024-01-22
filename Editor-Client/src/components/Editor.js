@@ -9,43 +9,44 @@ import './editor.css';
 
 const Editor = ({ socketRef, roomId, onCodeChange }) => {
   const dispatch = useDispatch();
-  const editorValue = useSelector((state) => state.EditorState.value);
+  let editorValue = useSelector((state) => state.EditorState.value);
 
   const handleChange = (value) => {
-    onCodeChange(value);
-    socketRef.current.emit("CODE_CHANGE", {
-      room: roomId,
+    dispatch(changeEditorValue(value));
+    socketRef.current.emit('CODE_CHANGE', {
+      roomId,
       code: value,
     });
-    dispatch(changeEditorValue(value));
-    console.log('value', value);
+    onCodeChange(value);
+    console.log('value--->', value);
   };
 
   useEffect(() => {
+    const codeChangeHandler = ({ code }) => {
+      console.log('from editor comp code change -> ', code);
+      if (code !== null) {
+        dispatch(changeEditorValue(code));
+      }
+    };
+
     if (socketRef.current) {
-      const codeChangeHandler = ({ code }) => {
-        console.log('from editor comp code change -> ', code);
-        if (code !== null) {
-          dispatch(changeEditorValue(code));
-        }
-      };
-  
-      socketRef.current.on("CODE_CHANGE", codeChangeHandler);
-  
-      return () => {
-        socketRef.current.off("CODE_CHANGE", codeChangeHandler);
-      };
+      socketRef.current.on('CODE_CHANGE', codeChangeHandler);
     }
+
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.off('CODE_CHANGE', codeChangeHandler);
+      }
+    };
   }, [socketRef.current]);
-  
 
   return (
     <div className="editor-container fon">
       <CodeMirror
-        id='editor'
+        id="editor"
         value={editorValue}
         onChange={handleChange}
-        height='35rem'
+        height="35rem"
         theme={aura}
         extensions={[javascript({ jsx: true })]}
       />

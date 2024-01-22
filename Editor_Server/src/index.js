@@ -26,28 +26,28 @@ app.use(bodyParser.urlencoded({ extended: true }));
 io.on('connection', (socket) => {
   console.log(`User connected: ${socket.id}`);
   socket.on('join_room', (data) => {
-    const { ownName, room } = data;
-    console.log('---------own name ---', ownName);
-    socket.join(room);
-    console.log(`User ${ownName} joined room ${room}`);
-    socket.to(room).emit("JOINED", { Ownname: ownName, room });
+    const { ownName, roomId } = data;
+    console.log(`---------own name -----> ${ownName}`);
+    socket.join(roomId);
+    console.log(`User ${ownName} joined room ${roomId}`);
+    socket.to(roomId).emit('JOINED', { Ownname: ownName, room: roomId });
   });
 
   socket.on('SYNC_CODE', (data) => {
-    const { code, room } = data;
-    console.log(`from sync_code roomid and code ${room} in room ${code}`);
-    socket.to(room).emit('CODE_CHANGE', { code });
+    const { code, roomId } = data;
+    console.log(`from sync_code roomid and code ${roomId} in room ${code}`);
+    socket.to(roomId).emit('CODE_CHANGE', { code });
   });
 
   socket.on('CODE_CHANGE', (data) => {
-    const { code, room } = data;
-    console.log(`from code_change roomid and code ${room} in room ${code}`);
-    socket.in(room).emit('CODE_CHANGE', { code });
+    const { code, roomId } = data;
+    console.log(`from code_change roomid and code ${roomId} in room ${code}`);
+    socket.to(roomId).emit('CODE_CHANGE', { code });
   });
 
-  socket.on('Left', (data) => {
-    const { ownName, room } = data;
-    io.to(room).emit("Disconnected", { Ownname: ownName, room });
+  socket.on('DISCONNECTED', (data) => {
+    const { ownName, roomId } = data;
+    socket.to(roomId).emit('DISCONNECTED', { Ownname: ownName, room: roomId });
   });
 });
 

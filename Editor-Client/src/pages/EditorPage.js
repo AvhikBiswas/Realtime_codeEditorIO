@@ -5,7 +5,7 @@ import io from 'socket.io-client';
 import UserAvatar from '../components/UserAvatar';
 import Editor from '../components/Editor';
 import UserName from '../components/UserName';
-import { SignInNewUser, UserLeave, GetAllUser } from '../api/User_API'; // Import your API functions
+import { SignInNewUser, UserLeave, GetAllUser } from '../api/User_API';
 import './editorpage.css';
 
 export default function EditorPage() {
@@ -19,20 +19,21 @@ export default function EditorPage() {
   const socketRef = useRef(null);
   const codeRef = useRef('Console.log()');
   const [ownName, setOwnName] = useState(name);
+  
 
   useEffect(() => {
     const init = async () => {
+      socketRef.current = io.connect('http://localhost:3030');
+
+      socketRef.current.on('connect_error', (err) => handleErrors(err));
+      socketRef.current.on('connect_failed', (err) => handleErrors(err));
+
       try {
-        // await SignInNewUser(ownName, roomId);
         const users = await GetAllUser(roomId);
-        setAlluserData(users);
+        setAlluserData(users.data);
       } catch (error) {
         console.error('Error during user initialization:', error);
       }
-
-      socketRef.current = await io.connect('http://localhost:3030');
-      socketRef.current.on('connect_error', (err) => handleErrors(err));
-      socketRef.current.on('connect_failed', (err) => handleErrors(err));
 
       function handleErrors(e) {
         console.log('socket error', e);
@@ -40,9 +41,9 @@ export default function EditorPage() {
         navigate('/');
       }
 
-      socketRef.current.emit('JOIN', {
+      socketRef.current.emit('join_room', {
+        ownName,
         roomId,
-        name: ownName,
       });
 
       socketRef.current.on('connect', () => {
@@ -56,10 +57,10 @@ export default function EditorPage() {
         }
       });
 
-      socketRef.current.on('JOINED', ({ username, roomId }) => {
-        if (username !== location.state?.username) {
-          toast.success(`${username} joined the room.`);
-          console.log(`${username} joined`);
+      socketRef.current.on('JOINED', ({ Ownname, room }) => {
+        if (Ownname !== location.state?.userName) {
+          toast.success(`${Ownname} joined the room.`);
+          console.log(`${Ownname} joined`);
         }
 
         socketRef.current.emit('SYNC_CODE', {
@@ -68,8 +69,8 @@ export default function EditorPage() {
         });
       });
 
-      socketRef.current.on('DISCONNECTED', ({ roomId, username }) => {
-        toast.success(`${username} left the room.`);
+      socketRef.current.on('DISCONNECTED', ({ roomId, Ownname }) => {
+        toast.success(`${Ownname} left the room.`);
         if (socketRef.current) {
           socketRef.current.disconnect();
         }
@@ -79,7 +80,7 @@ export default function EditorPage() {
     init();
 
     return () => {
-      UserLeave(ownName,roomId);
+      UserLeave(ownName, roomId);
       if (socketRef.current) {
         socketRef.current.disconnect();
         socketRef.current.off('JOINED');
@@ -133,11 +134,12 @@ export default function EditorPage() {
 
           <div className='flex flex-1'>
             <div className='w-1/5 flex flex-wrap mb-8'>
-              {Array.isArray(AlluserData) && AlluserData.map((item) => (
-                <UserAvatar key={item._id} user={item} />
-              ))}
+              {AlluserData.length !== 0 ? (
+                AlluserData.map((item) => (
+                  <UserAvatar key={item._id} user={item} />
+                ))
+              ) : null}
             </div>
-
 
             <div className='w-3/5 mb-5'>
               <Editor
