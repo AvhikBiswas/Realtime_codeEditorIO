@@ -1,9 +1,16 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  value: `console.log()`,
+  value: `#include <iostream>
+  using namespace std;
+  int main()
+  {
+    cout << "Hello World";
+    return 0;
+  }`,
 };
- 
+
+
 export const editorSlice = createSlice({
   name: "EditorState",
   initialState,

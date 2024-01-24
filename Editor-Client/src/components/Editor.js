@@ -29,17 +29,18 @@ const Editor = ({ socketRef, roomId, onCodeChange }) => {
         dispatch(changeEditorValue(code));
       }
     };
-
+  
     if (socketRef.current) {
       socketRef.current.on('CODE_CHANGE', codeChangeHandler);
     }
-
+  
     return () => {
       if (socketRef.current) {
         socketRef.current.off('CODE_CHANGE', codeChangeHandler);
       }
     };
   }, [socketRef.current]);
+  
 
   return (
     <div className="editor-container fon">
