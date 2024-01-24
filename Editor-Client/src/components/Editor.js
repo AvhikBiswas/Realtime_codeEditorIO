@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { changeEditorValue } from '../Utils/EditorSlice';
 import CodeMirror from '@uiw/react-codemirror';
-import { javascript } from '@codemirror/lang-javascript';
+import { cpp } from '@codemirror/lang-cpp'; // Import C++ language extension
 import { aura } from '@uiw/codemirror-theme-aura';
 import { useParams } from 'react-router-dom';
 import './editor.css';
@@ -49,7 +49,7 @@ const Editor = ({ socketRef, roomId, onCodeChange }) => {
         onChange={handleChange}
         height="35rem"
         theme={aura}
-        extensions={[javascript({ jsx: true })]}
+        extensions={[cpp()]} 
       />
     </div>
   );

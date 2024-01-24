@@ -6,6 +6,7 @@ const socketIO = require('socket.io');
 const bodyParser = require('body-parser');
 const Api_Routes = require('./routes/index');
 const mongoose = require('mongoose');
+const { compile } = require('./service/compile_service.js');
 
 const port = 3030;
 const app = express();
@@ -45,10 +46,20 @@ io.on('connection', (socket) => {
     socket.in(roomId).emit('CODE_CHANGE', { code });
   });
 
+  socket.on('RUN', async (data) => {
+    const { code, roomId,input } = data;
+    console.log(`Received RUN event for roomId ${code}`);
+    const res = await compile(code,input);
+    console.log('Response from compile:', res);
+    io.to(roomId).emit('RUNED', { code: res });
+  });
+  
+
   socket.on('DISCONNECTING', (data) => {
     const { ownName, roomId } = data;
     socket.to(roomId).emit('DISCONNECTED', { Ownname: ownName, room: roomId });
   });
+
 });
 
 // Test Route

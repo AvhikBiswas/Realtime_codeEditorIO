@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import io from 'socket.io-client';
+import { FaLinkedin, FaGithub } from 'react-icons/fa';
 import UserAvatar from '../components/UserAvatar';
 import Editor from '../components/Editor';
 import UserName from '../components/UserName';
@@ -11,14 +12,16 @@ import './editorpage.css';
 export default function EditorPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const name = location.state?.userName;
+  const { userName } = location.state || {};
   const { roomId } = useParams();
-  const [AlluserData, setAlluserData] = useState([]);
+  const [allUserData, setAllUserData] = useState([]);
   const [showUserName, setShowUserName] = useState(false);
+  const [output, setOutput] = useState('');
 
   const socketRef = useRef(null);
   const codeRef = useRef('Console.log()');
-  const [ownName, setOwnName] = useState(name);
+  const [ownName, setOwnName] = useState(userName);
+  const inputRef=useRef('');
 
   useEffect(() => {
     const init = async () => {
@@ -29,13 +32,13 @@ export default function EditorPage() {
 
       try {
         const users = await GetAllUser(roomId);
-        setAlluserData(users.data);
+        setAllUserData(users.data);
       } catch (error) {
         console.error('Error during user initialization:', error);
       }
 
       function handleErrors(e) {
-        console.log('socket error', e);
+        console.log('Socket error', e);
         toast.error('Socket connection failed, try again later.');
         navigate('/');
       }
@@ -48,20 +51,27 @@ export default function EditorPage() {
       socketRef.current.on('connect', () => {
         try {
           const storedCode = localStorage.getItem('editorCode');
-          const initialCode = storedCode;
+          const initialCode = storedCode || '';
           socketRef.current.emit('SYNC_CODE', {
             code: initialCode,
             roomId,
           });
           codeRef.current = initialCode;
         } catch (error) {
-          console.log('problem syncing the code');
+          console.log('Problem syncing the code:', error);
         }
       });
 
-      socketRef.current.on('JOINED', ({ Ownname, room }) => {
+      socketRef.current.on('JOINED', async ({ Ownname }) => {
         if (Ownname !== location.state?.userName) {
-          toast.success(`${Ownname} joined the room.`);
+
+          try {
+            const users = await GetAllUser(roomId);
+            setAllUserData(users.data);
+          } catch (error) {
+            console.error('Error during user initialization:', error);
+          } toast.success(`${Ownname} joined the room.`);
+
           console.log(`${Ownname} joined`);
         }
 
@@ -70,6 +80,12 @@ export default function EditorPage() {
           roomId,
         });
       });
+
+      socketRef.current.on('RUNED', ({ code }) => {
+        console.log('Received RUNED event:', code);
+        setOutput(code);
+      });
+      
 
       socketRef.current.on('DISCONNECTED', ({ Ownname }) => {
         toast.success(`${Ownname} left the room.`);
@@ -86,9 +102,28 @@ export default function EditorPage() {
     };
   }, []);
 
+  // useEffect(() => {
+  //   const compile = async () => {
+  //     socketRef.current.on('RUNED', ({ code }) => {
+  //       console.log('Response:', code);
+  //       setOutput(code);
+  //     });
+  //   };
+
+  //   compile();
+  // }, []);
+
   const handleCopyToClipboard = () => {
     navigator.clipboard.writeText(roomId);
     toast.success('Room link copied to clipboard!');
+  };
+
+  const handelRun = () => {
+    socketRef.current.emit('RUN', {
+      roomId,
+      code: codeRef.current,
+      input:inputRef.current,
+    });
   };
 
   const handelLeave = async () => {
@@ -97,11 +132,15 @@ export default function EditorPage() {
     navigate('/');
   };
 
+  const handelInput=(e)=>{
+    inputRef.current=e.target.value;
+  }
+
   const linkedInUrl = 'https://www.linkedin.com/in/avhik/';
   const githubUrl = 'https://github.com/AvhikBiswas';
 
   return (
-    <div className='flex flex-col h-screen b bg-gray-900 mt-2'>
+    <div className='flex flex-col h-screen bg-gray-900 mt-2'>
       {showUserName ? (
         <UserName />
       ) : (
@@ -123,6 +162,7 @@ export default function EditorPage() {
               <option value='cpp'>C++</option>
             </select>
             <button
+              onClick={handelRun}
               className='bg-green-500 text-white px-4 py-2 rounded mr-2 m-1'
             >
               Run
@@ -131,8 +171,8 @@ export default function EditorPage() {
 
           <div className='flex flex-1'>
             <div className='w-1/5 flex flex-wrap mb-8'>
-              {AlluserData.length !== 0 ? (
-                AlluserData.map((item) => (
+              {allUserData.length !== 0 ? (
+                allUserData.map((item) => (
                   <UserAvatar key={item._id} user={item} />
                 ))
               ) : null}
@@ -152,13 +192,16 @@ export default function EditorPage() {
               <div className='bg-gray-800 rounded text-white mb-4 p-2'>
                 Input Terminal
               </div>
-              <textarea
+              <textarea onChange={handelInput}
                 rows='10'
                 className='w-full p-2 border rounded mb-4 bg-gray-800 text-white'
                 placeholder='Enter code here...'
               />
               <div className='bg-gray-800 rounded text-white p-2'>
                 Output Terminal
+              </div>
+              <div className='w-full p-2 mt-2 border rounded mb-4 bg-gray-800 text-white'>
+               <p>{output}</p>
               </div>
             </div>
           </div>
@@ -177,7 +220,7 @@ export default function EditorPage() {
                   rel='noopener noreferrer'
                   className='text-blue-500 hover:underline mx-2'
                 >
-                  LinkedIn
+                  <FaLinkedin /> LinkedIn
                 </a>
                 <a
                   href={githubUrl}
@@ -185,7 +228,7 @@ export default function EditorPage() {
                   rel='noopener noreferrer'
                   className='text-gray-500 hover:underline mx-2'
                 >
-                  GitHub
+                  <FaGithub /> GitHub
                 </a>
               </div>
             </div>
