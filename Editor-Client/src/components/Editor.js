@@ -4,7 +4,6 @@ import { changeEditorValue } from '../Utils/EditorSlice';
 import CodeMirror from '@uiw/react-codemirror';
 import { cpp } from '@codemirror/lang-cpp'; // Import C++ language extension
 import { aura } from '@uiw/codemirror-theme-aura';
-import { useParams } from 'react-router-dom';
 import './editor.css';
 
 

@@ -3,11 +3,12 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import io from "socket.io-client";
 import { FaLinkedin, FaGithub } from "react-icons/fa";
-import UserAvatar from "../components/UserAvatar";
 import Editor from "../components/Editor";
 import UserName from "../components/UserName";
 import { SignInNewUser, UserLeave, GetAllUser } from "../api/User_API";
 import { useSelector } from "react-redux";
+import UserAvatar from "../components/UserAvatar";
+
 import "./editorpage.css";
 
 export default function EditorPage() {
@@ -177,21 +178,37 @@ export default function EditorPage() {
               {loading ? "Running..." : "Run"}
             </button>
           </div>
-          <div className="text-white text-lg text-center flex justify-start items-center ml-5">
-            Connected User
-          </div>
-          <div className="flex flex-1 p-3">
-            <div className="flex w-1/5 m-2">
-              <div className="users flex flex-wrap">
-                {allUserData.length !== 0
-                  ? allUserData.map((item) => (
-                      <UserAvatar key={item._id} user={item} />
-                    ))
-                  : null}
+
+          <div className="flex flex-1 ">
+            <div className="flex w-1/5 m-2 flex-col relative">
+              <div className="text-white text-lg text-center flex flex-row justify-center items-center pb-6 font-bold font-sans">
+                {" "}
+                Connected User{" "}
+              </div>
+              <div className="users flex flex-wrap justify-start p-1 items-center">
+                {ownName && (
+                  <UserAvatar
+                    key={ownName}
+                    user={{ userNames: ownName }}
+                    ownName={ownName}
+                    bold={true}
+                  />
+                )}
+                {allUserData &&
+                  allUserData.map(
+                    (item) =>
+                      item.userNames !== ownName && (
+                        <UserAvatar
+                          key={item._id}
+                          user={item}
+                          bold={false}
+                        />
+                      )
+                  )}
               </div>
             </div>
 
-            <div className="w-3/5 mb-5">
+            <div className="w-4/5 mb-5">
               <Editor
                 socketRef={socketRef}
                 roomId={roomId}
@@ -199,7 +216,6 @@ export default function EditorPage() {
                   codeRef.current = code;
                 }}
                 codeRef={codeRef}
-                
               />
             </div>
 
