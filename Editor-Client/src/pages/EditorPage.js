@@ -21,7 +21,7 @@ export default function EditorPage() {
   const [loading, setLoading] = useState(false);
 
   const socketRef = useRef(null);
-  const codeRef = useRef("");
+  const codeRef = useRef("nullllll");
   const [ownName, setOwnName] = useState(userName);
   const editorValue = useSelector((state) => state.EditorState.value);
   const inputRef = useRef("");
@@ -198,6 +198,8 @@ export default function EditorPage() {
                 onCodeChange={(code) => {
                   codeRef.current = code;
                 }}
+                codeRef={codeRef}
+                
               />
             </div>
 

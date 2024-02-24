@@ -7,26 +7,33 @@ import { aura } from '@uiw/codemirror-theme-aura';
 import { useParams } from 'react-router-dom';
 import './editor.css';
 
-const Editor = ({ socketRef, roomId, onCodeChange }) => {
+
+const Editor = ({ socketRef, roomId, onCodeChange,codeRef }) => {
   const dispatch = useDispatch();
+
   const editorValue = useSelector((state) => state.EditorState.value);
+  codeRef.current=editorValue;
+
 
   const handleChange = (value) => {
-    dispatch(changeEditorValue(value));
-    socketRef.current.emit('CODE_CHANGE', {
-      roomId,
-      code: value,
-    });
-    onCodeChange(value);
-    console.log('value--->', value);
+    if (value !== editorValue) {
+      
+      codeRef.current = value;
+      dispatch(changeEditorValue(value));
+      socketRef.current.emit('CODE_CHANGE', {
+        roomId,
+        code: value,
+      });
+      onCodeChange(value);
+    }
   };
 
   useEffect(() => {
     const codeChangeHandler = ({ code }) => {
-      console.log('from editor comp code change -> ', code);
       if (code !== null) {
-        onCodeChange(code);
         dispatch(changeEditorValue(code));
+        codeRef.current = code;
+        onCodeChange(code);
       }
     };
   
