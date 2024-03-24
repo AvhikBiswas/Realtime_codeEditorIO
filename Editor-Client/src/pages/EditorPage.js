@@ -8,7 +8,6 @@ import UserName from "../components/UserName";
 import { SignInNewUser, UserLeave, GetAllUser } from "../api/User_API";
 import { useSelector } from "react-redux";
 import UserAvatar from "../components/UserAvatar";
-
 import "./editorpage.css";
 
 export default function EditorPage() {
@@ -33,7 +32,8 @@ export default function EditorPage() {
       navigate("/");
     }
     const init = async () => {
-      socketRef.current = io.connect("http://localhost:3030");
+      const socket_URL=process.env.REACT_APP_SOCKET_PORT;
+      socketRef.current = io.connect(socket_URL);
 
       socketRef.current.on("connect_error", (err) => handleErrors(err));
       socketRef.current.on("connect_failed", (err) => handleErrors(err));
