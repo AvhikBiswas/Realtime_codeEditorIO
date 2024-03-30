@@ -9,12 +9,15 @@ const mongoose = require("mongoose");
 const { compile } = require("./service/compile_service.js");
 const RemoveUser = require("./service/LeftUser_service.js");
 const GetAllActiveUser_Service = require("./service/ActiveUser_service");
-const port = 3030;
+require("dotenv").config();
+
+const port = 8000;
 const app = express();
 const server = http.createServer(app);
+const Client_URL = process.env.CLIENT_URL;
 const io = socketIO(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: Client_URL,
     methods: ["GET", "POST"],
   },
 });
@@ -84,15 +87,17 @@ io.on("connection", (socket) => {
 });
 
 // Test Route
-app.get("/", (req, res) => {
-  console.log("Route hit!");
-  res.send("Hello, World!");
+app.get("/helth", (req, res) => {
+  return res.status(200).json({
+    mess: "Server Running.",
+    err: false,
+  });
 });
 
 // API Routes
 app.use("/api", Api_Routes);
 
-server.listen(port, async () => {
+server.listen(process.env.PORT || port, async () => {
   await connectDB();
   console.log("Server Running On", port);
   if (mongoose.connection.readyState !== 1) {
