@@ -1,7 +1,7 @@
 const express = require('express');
-const AllActiveUser = require('../../controller/GetAllActiveUser_controller');
-const Leave = require('../../controller/UserLeft_controller');
-const create_user = require('../../controller/JoinUser_controller');
+const AllActiveUser = require('../../controller/GetAllActiveUser_controller.js');
+const Leave = require('../../controller/UserLeft_controller.js');
+const create_user = require('../../controller/JoinUser_controller.js');
 
 const Router = express.Router();
 

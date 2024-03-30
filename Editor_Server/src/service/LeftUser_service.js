@@ -1,4 +1,4 @@
-const UserRepository = require('../repository/userRepository');
+const UserRepository = require('../repository/userRepository.js');
 
 class RemoveUser {
     constructor() {

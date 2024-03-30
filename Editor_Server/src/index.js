@@ -4,11 +4,11 @@ const cors = require("cors");
 const connectDB = require("./config/database.js");
 const socketIO = require("socket.io");
 const bodyParser = require("body-parser");
-const Api_Routes = require("./routes/index");
+const Api_Routes = require("./routes/index.js");
 const mongoose = require("mongoose");
 const { compile } = require("./service/compile_service.js");
 const RemoveUser = require("./service/LeftUser_service.js");
-const GetAllActiveUser_Service = require("./service/ActiveUser_service");
+const GetAllActiveUser_Service = require("./service/ActiveUser_service.js");
 require("dotenv").config();
 
 const port = 8000;

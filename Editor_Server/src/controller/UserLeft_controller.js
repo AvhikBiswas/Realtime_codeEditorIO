@@ -1,4 +1,4 @@
-const RemoveUser = require('../service/LeftUser_service');
+const RemoveUser = require('../service/LeftUser_service.js');
 const removeUser = new RemoveUser();
 
 const Leave = async (req, res) => {

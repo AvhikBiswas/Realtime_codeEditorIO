@@ -1,4 +1,4 @@
-const GetAllActiveUser_Service = require('../service/ActiveUser_service');
+const GetAllActiveUser_Service = require('../service/ActiveUser_service.js');
 const Find_ActiveAllUser = new GetAllActiveUser_Service();
 
 const GetAllActiveUser = async (req, res) => {

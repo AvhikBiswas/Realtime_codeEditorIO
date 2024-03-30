@@ -1,4 +1,4 @@
-const Join_User = require('../service/Join-service');
+const Join_User = require('../service/Join-service.js');
 const join_user = new Join_User();
 
 const create_user = async (req, res) => {
