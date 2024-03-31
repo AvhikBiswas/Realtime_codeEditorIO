@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import io from "socket.io-client";
 import { FaLinkedin, FaGithub } from "react-icons/fa";
 import Editor from "../components/Editor";
-import { SignInNewUser, UserLeave, GetAllUser } from "../api/User_API";
+import { UserLeave, GetAllUser } from "../api/User_API";
 import { useSelector } from "react-redux";
 import UserAvatar from "../components/UserAvatar";
 import "./editorpage.css";
@@ -38,7 +38,6 @@ export default function EditorPage() {
       socketRef.current.on("connect_failed", (err) => handleErrors(err));
 
       try {
-        await SignInNewUser(ownName, roomId);
         const users = await GetAllUser(roomId);
         setAllUserData(users.data);
       } catch (error) {
