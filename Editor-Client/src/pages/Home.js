@@ -22,7 +22,6 @@ export default function Home() {
   const createRoom = (e) => {
     e.preventDefault();
     const id = uuidv4();
-    console.log(id);
     setRoomId(id);
     toast.success('Room Created Successfully');
   };

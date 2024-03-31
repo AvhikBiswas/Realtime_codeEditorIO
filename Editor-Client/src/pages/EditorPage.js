@@ -47,7 +47,6 @@ export default function EditorPage() {
       }
 
       function handleErrors(e) {
-        console.log("Socket error", e);
         toast.error("Socket connection failed, try again later.");
         navigate("/");
       }
@@ -66,7 +65,6 @@ export default function EditorPage() {
             console.error("Error during user initialization:", error);
           }
           toast.success(`${Ownname} joined the room.`);
-          console.log(`${Ownname} joined`);
         }
 
         socketRef.current.emit("SYNC_CODE", {
@@ -76,7 +74,6 @@ export default function EditorPage() {
       });
 
       socketRef.current.on("USERS_UPDATE", async (data) => {
-        console.log("user left name ", data);
 
         const userData = await GetAllUser(roomId);
         await toast.success(`${data} Left The Room`);
@@ -84,7 +81,6 @@ export default function EditorPage() {
       });
 
       socketRef.current.on("RUNED", ({ code }) => {
-        console.log("Received RUNED event:", code);
         setLoading(false);
         setOutput(code);
       });
@@ -93,7 +89,6 @@ export default function EditorPage() {
         const data = { ownName, roomId };
         await UserLeave(data);
         const userData = await GetAllUser(roomId);
-        console.log(`${Ownname} left the room.`);
         setAllUserData(userData.data);
       });
     };

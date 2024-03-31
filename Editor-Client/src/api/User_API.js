@@ -4,13 +4,12 @@ import axios from "axios";
 const Api_Url_v1 = process.env.REACT_APP_API_URL;
 
 export const SignInNewUser = async (ownName, roomid) => {
-  console.log('Api_Url_v1_------------>', Api_Url_v1)
   await axios
     .post(`${Api_Url_v1}/create`, {
       userNames: ownName,
       roomID: roomid,
     })
-    .then((response) => console.log("response is ", response?.data?.data))
+    .then((response) => response)
     .catch((error) => console.error("problem to send user data:", error));
 };
 
@@ -19,7 +18,7 @@ export const UserLeave = async (data) => {
     .delete(`${Api_Url_v1}/leave`, {
       data,
     })
-    .then((response) => console.log("response from axios ", response))
+    .then((response) => response)
     .catch((error) => console.error("problem to send user data:", error));
 };
 
