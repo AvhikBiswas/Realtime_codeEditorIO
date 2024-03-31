@@ -23,7 +23,12 @@ const io = socketIO(server, {
 });
 
 // Middlewares
-app.use(cors());
+app.use(
+  cors({
+    origin: Client_URL,
+    credentials: true,
+  })
+);
 app.use(bodyParser.json());
 app.use(
   bodyParser.urlencoded({
