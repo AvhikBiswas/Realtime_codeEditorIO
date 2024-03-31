@@ -1,10 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import io from "socket.io-client";
 import { FaLinkedin, FaGithub } from "react-icons/fa";
 import Editor from "../components/Editor";
-import { UserLeave, GetAllUser } from "../api/User_API";
+import { SignInNewUser, UserLeave, GetAllUser } from "../api/User_API";
 import { useSelector } from "react-redux";
 import UserAvatar from "../components/UserAvatar";
 import "./editorpage.css";
@@ -24,6 +24,24 @@ export default function EditorPage() {
   const [ownName, setOwnName] = useState(userName);
   const editorValue = useSelector((state) => state.EditorState.value);
   const inputRef = useRef("");
+
+  useEffect(() => {
+    const init = async () => {
+      const users = await GetAllUser(roomId);
+      setAllUserData(users.data);
+
+      // Check if the user is present in allUserData
+      const userExists = users.data.find((user) => user.userNames === ownName);
+      if (!userExists) {
+        await SignInNewUser(ownName, roomId);
+        const users = await GetAllUser(roomId);
+        setAllUserData(users.data);
+      }
+      return;
+    };
+
+    init();
+  }, [ownName, roomId]);
 
   useEffect(() => {
     if (!ownName) {
@@ -171,8 +189,7 @@ export default function EditorPage() {
       <div className="flex flex-1 ">
         <div className="flex w-1/5 m-2 flex-col relative">
           <div className="text-white text-lg text-center flex flex-row justify-center items-center pb-6 font-bold font-sans">
-            {" "}
-            Connected User{" "}
+            Connected User
           </div>
           <div className="users flex flex-wrap justify-start p-1 items-center">
             {ownName && (
@@ -223,7 +240,7 @@ export default function EditorPage() {
         </div>
       </div>
 
-      <div className="p-4 h-full w-full text-white flex items-center justify-between rounded border-t border-gray-800">
+      <div className="p-4 xl:flex hidden h-full w-full text-white items-center justify-between rounded border-t border-gray-800">
         <div className="flex items-center">
           <div className="mr-2 text-xs bg-gray-800 p-2 rounded-md">
             <p>Note: This app is still under development.</p>
