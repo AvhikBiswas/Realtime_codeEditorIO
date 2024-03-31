@@ -1,25 +1,17 @@
 const UserRepository = require('../repository/userRepository.js');
-
 class Join_User {
-    constructor() {
-        this.userRepository = new UserRepository();
-    }
-    async Join(data) {
-        
-        try {
-            console.log(data);
-            const res = await this.userRepository.findUser(data);
-            console.log('find user return ',res);
-            if(res.length===0){
-                const UserCreated =await this.userRepository.createUser(data);
-                return UserCreated;
-            }
-            return res;
-        } catch (error) {
-            console.log('error in join service', error);
-        }
-       
-    }
-    
+  constructor() {
+    this.userRepository = new UserRepository();
+  }
+  async Join(data) {
+    try {
+      const res = await this.userRepository.findUser(data);
+      if (res.length === 0) {
+        const UserCreated = await this.userRepository.createUser(data);
+        return UserCreated;
+      }
+      return res;
+    } catch (error) {}
+  }
 }
-module.exports=Join_User;
+module.exports = Join_User;
