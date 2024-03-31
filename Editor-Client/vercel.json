@@ -1,0 +1,13 @@
+{
+    "version": 2,
+    "builds": [
+      {
+        "src": "build",
+        "use": "@vercel/static-build"
+      }
+    ],
+    "env": {
+      "NODE_ENV": "production"
+    }
+  }
+  
