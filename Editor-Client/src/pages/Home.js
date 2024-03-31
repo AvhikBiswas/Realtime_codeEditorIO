@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
@@ -10,14 +10,14 @@ export default function Home() {
   
   const navigate = useNavigate();
 
-  const create_user = async (ownName, roomID) => {
+  const create_user = useMemo(() => async (ownName, roomID) => {
     if (ownName && roomID) {
       const data = await SignInNewUser(ownName, roomID);
       return data;
     } else {
       console.error('Name or Room ID is empty');
     }
-  };
+  }, []);
 
   const createRoom = (e) => {
     e.preventDefault();
