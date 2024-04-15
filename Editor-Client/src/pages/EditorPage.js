@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import io from "socket.io-client";
@@ -18,26 +18,27 @@ export default function EditorPage() {
   const [showUserName, setShowUserName] = useState(false);
   const [output, setOutput] = useState("");
   const [loading, setLoading] = useState(false);
-
   const socketRef = useRef(null);
-  const codeRef = useRef("nullllll");
+  const codeRef = useRef("");
   const [ownName, setOwnName] = useState(userName);
   const editorValue = useSelector((state) => state.EditorState.value);
   const inputRef = useRef("");
 
   useEffect(() => {
     const init = async () => {
-      const users = await GetAllUser(roomId);
-      setAllUserData(users.data);
-
-      // Check if the user is present in allUserData
-      const userExists = users.data.find((user) => user.userNames === ownName);
-      if (!userExists) {
-        await SignInNewUser(ownName, roomId);
+      try {
         const users = await GetAllUser(roomId);
         setAllUserData(users.data);
+
+        const userExists = users.data.find((user) => user.userNames === ownName);
+        if (!userExists) {
+          await SignInNewUser(ownName, roomId);
+          const updatedUsers = await GetAllUser(roomId);
+          setAllUserData(updatedUsers.data);
+        }
+      } catch (error) {
+        console.error("Error during user initialization:", error);
       }
-      return;
     };
 
     init();
@@ -48,23 +49,24 @@ export default function EditorPage() {
       toast.error("Join with your Name");
       navigate("/");
     }
-    const init = async () => {
+
+    const initSocket = async () => {
       const socket_URL = process.env.REACT_APP_SOCKET_PORT;
       socketRef.current = io.connect(socket_URL);
 
-      socketRef.current.on("connect_error", (err) => handleErrors(err));
-      socketRef.current.on("connect_failed", (err) => handleErrors(err));
+      const handleErrors = (err) => {
+        toast.error("Socket connection failed, try again later.");
+        navigate("/");
+      };
+
+      socketRef.current.on("connect_error", handleErrors);
+      socketRef.current.on("connect_failed", handleErrors);
 
       try {
         const users = await GetAllUser(roomId);
         setAllUserData(users.data);
       } catch (error) {
         console.error("Error during user initialization:", error);
-      }
-
-      function handleErrors(e) {
-        toast.error("Socket connection failed, try again later.");
-        navigate("/");
       }
 
       socketRef.current.emit("join_room", {
@@ -91,7 +93,7 @@ export default function EditorPage() {
 
       socketRef.current.on("USERS_UPDATE", async (data) => {
         const userData = await GetAllUser(roomId);
-        await toast.success(`${data} Left The Room`);
+        toast.success(`${data} Left The Room`);
         setAllUserData(userData.data);
       });
 
@@ -100,7 +102,7 @@ export default function EditorPage() {
         setOutput(code);
       });
 
-      socketRef.current.on("DISCONNECTED", async ({ Ownname, room }) => {
+      socketRef.current.on("DISCONNECTED", async ({ Ownname }) => {
         const data = { ownName, roomId };
         await UserLeave(data);
         const userData = await GetAllUser(roomId);
@@ -108,7 +110,7 @@ export default function EditorPage() {
       });
     };
 
-    init();
+    initSocket();
 
     return () => {
       if (socketRef.current) {
@@ -141,7 +143,6 @@ export default function EditorPage() {
       return;
     }
 
-    // Emit a Left event to the socket server before leaving the room
     socketRef.current.emit("Left", { ownName, roomId });
 
     const data = { ownName, roomId };
